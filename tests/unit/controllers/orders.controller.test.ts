@@ -4,6 +4,7 @@ import sinon from 'sinon';
 import { Request, Response } from 'express';
 import OrderModel from '../../../src/database/models/order.model';
 import app from '../../../src/app';
+import OrderService from '../../../src/services/Order.service';
 
 chai.use(chaiHttp);
 
@@ -27,6 +28,7 @@ describe('OrdersController', function () {
     await findAllStub.resolves(orderModelInstances);
 
     const response = await chai.request(app).get('/orders');
+    // const orders = await OrderService.getOrders();
 
     expect(findAllStub.calledOnce).to.be.true;
 
@@ -35,10 +37,7 @@ describe('OrdersController', function () {
     expect(response.body.length).to.equal(2);
     expect(response.body[0].id).to.equal(mockOrders[0].id);
     expect(response.body[0].userId).to.equal(mockOrders[0].userId);
-    // expect(response.body[0].productIds).to.deep.equal(mockOrders[0].productIds);
     expect(response.body[1].id).to.equal(mockOrders[1].id);
-    // expect(response.body[1].userId).to.equal(mockOrders[1].userId);
-    // expect(response.body[1].productIds).to.deep.equal(mockOrders[1].productIds);
+    expect(response.body[1].userId).to.equal(mockOrders[1].userId);
   });
-
 });

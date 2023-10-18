@@ -8,6 +8,10 @@ interface OrderService {
   createOrder: (order: Order) => Promise<Order>;
 }
 
+interface DatabaseProduct {
+  id: number;
+}
+
 const getOrders: OrderService['getOrders'] = async () => {
   const orders = await OrderModel.findAll({
     include: [{
@@ -21,7 +25,8 @@ const getOrders: OrderService['getOrders'] = async () => {
     return {
       id: rawOrder.id,
       userId: rawOrder.userId,
-      productIds: rawOrder.productIds ? rawOrder.productIds.map((product: any) => product.id) : [],
+      productIds: rawOrder.productIds ? (rawOrder.productIds as unknown as DatabaseProduct[])
+        .map((product) => product.id) : [],
     };
   });
 };
