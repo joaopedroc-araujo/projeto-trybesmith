@@ -1,5 +1,7 @@
 import { Product } from '../types/Product';
-import ProductModel, { ProductSequelizeModel } from '../database/models/product.model';
+import ProductModel, {
+  ProductSequelizeModel, 
+} from '../database/models/product.model';
 
 interface ProductService {
   getProducts: () => Promise<Product[]>;
