@@ -1,20 +1,26 @@
 import chai, { expect } from 'chai';
 import chaiHttp from 'chai-http';
 import sinon from 'sinon';
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 // import createProduct from '../../../src/services/Product.service';
 import ProductModel from '../../../src/database/models/product.model';
-import app from '../../../src/app'; 
+import app from '../../../src/app';
+import ProductValidation from '../../../src/middlewares/ProductValidation.middleware';
+import { ERROR_MESSAGES, STATUS_CODES } from '../../../src/utils/errorsMessagesStatus';
+import sinonChai from 'sinon-chai';
 
 chai.use(chaiHttp);
+chai.use(sinonChai)
 
 describe('ProductsController', function () {
   const req = {} as Request;
   const res = {} as Response;
+  let next = sinon.stub();
 
   beforeEach(function () {
     res.status = sinon.stub().returns(res);
     res.json = sinon.stub().returns(res);
+    next = sinon.stub();
     sinon.restore();
   });
 
@@ -32,7 +38,7 @@ describe('ProductsController', function () {
     expect(findAllStub.calledOnce).to.be.true;
 
     expect(response.status).to.equal(200);
-  
+
     expect(response.body.length).to.equal(2);
     expect(response.body[0].name).to.equal(mockProducts[0].name);
     expect(response.body[0].price).to.equal(mockProducts[0].price);
@@ -56,9 +62,28 @@ describe('ProductsController', function () {
     expect(createStub.calledWith(req.body)).to.be.true;
 
     expect(response.status).to.equal(201);
-  
+
     expect(response.body.name).to.equal(mockProduct.name);
     expect(response.body.price).to.equal(mockProduct.price);
     expect(response.body.orderId).to.equal(mockProduct.orderId);
+  });
+
+  describe('ProductValidation', function () {
+  it('passa para o próximo middleware quando o produto é válido', function () {
+    req.body = { name: 'validName', price: 'validPrice' };
+
+    ProductValidation(req, res, next);
+
+    expect(next.calledOnce).to.be.true;
+  });
+
+  it('retorna um erro quando o nome não é informado', function () {
+    req.body = { price: 'validPrice' };
+
+    ProductValidation(req, res, next);
+
+    expect(res.status).to.have.been.calledWith(400);
+    expect(res.json).to.have.been.calledWith({ message: ERROR_MESSAGES.NAME.REQUIRED });
+  });
   });
 });

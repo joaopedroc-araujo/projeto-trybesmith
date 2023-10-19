@@ -4,10 +4,10 @@ import chaiHttp from 'chai-http';
 import { expect } from 'chai';
 import bcrypt from 'bcryptjs';
 import UserModel from '../../../src/database/models/user.model';
-import JWTMiddleware from '../../../src/auth/JWT.middleware';
 import UserService from '../../../src/services/User.service';
 import jwt from 'jsonwebtoken';
 import { Model } from 'sequelize';
+import JWTMiddleware from '../../../src/middlewares/auth/JWT.middleware';
 
 chai.use(chaiHttp);
 

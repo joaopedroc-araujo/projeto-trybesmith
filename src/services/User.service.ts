@@ -1,6 +1,6 @@
 import bcrypt from 'bcryptjs';
 import UserModel from '../database/models/user.model';
-import JWTMiddleware from '../auth/JWT.middleware';
+import JWTMiddleware from '../middlewares/auth/JWT.middleware';
 
 type LoginInput = {
   username: string;
